@@ -1,106 +1,208 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TradePro - Demo Trading</title>
+<title>TradePro - Live Indian & Forex Market</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-  body{background:#0b0e11;color:white}
-  .header{background:#1e2329;padding:15px;display:flex;justify-content:space-between;align-items:center}
-  .logo{color:#f0b90b;font-weight:bold;font-size:22px}
-  .balance{background:#2b3139;padding:8px 15px;border-radius:8px}
-  .container{display:flex;flex-wrap:wrap;gap:10px;padding:10px}
-  .left{flex:2;min-width:300px;background:#1e2329;border-radius:10px;padding:15px}
-  .right{flex:1;min-width:280px;background:#1e2329;border-radius:10px;padding:15px}
-  .pairs{display:flex;gap:10px;overflow-x:auto;margin-bottom:15px}
-  .pair{background:#2b3139;padding:10px 15px;border-radius:8px;cursor:pointer;white-space:nowrap;border:2px solid transparent}
-  .pair.active{border-color:#f0b90b}
-  .green{color:#0ecb81}.red{color:#f6465d}
-  #chart{width:100%;height:280px;background:#0b0e11;border-radius:8px;position:relative;overflow:hidden}
-  .candle{position:absolute;bottom:0;width:14px}
-  .trade-box input,.trade-box select{width:100%;padding:12px;margin:8px 0;background:#2b3139;border:none;color:white;border-radius:8px}
-  .btn{width:48%;padding:15px;border:none;border-radius:8px;font-weight:bold;font-size:16px;cursor:pointer}
-  .buy{background:#0ecb81;color:white}.sell{background:#f6465d;color:white}
-  .btns{display:flex;justify-content:space-between;margin-top:10px}
-  .history{margin-top:15px;font-size:13px}
-  .history div{padding:8px;border-bottom:1px solid #2b3139}
-  .note{text-align:center;padding:10px;font-size:12px;color:#888}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#0a0e17;color:#fff}
+header{background:#111827;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.logo{font-size:22px;font-weight:900;color:#f59e0b}
+.logo span{color:#fff}
+.bal{background:#1f2937;padding:8px 12px;border-radius:8px;font-weight:700;font-size:14px}
+.bal b{color:#22c55e}
+.tabs{display:flex;gap:8px;padding:12px;overflow-x:auto}
+.tab{padding:9px 16px;border-radius:20px;background:#1f2937;border:none;color:#fff;font-weight:700;white-space:nowrap;cursor:pointer}
+.tab.active{background:#f59e0b;color:#000}
+.section{padding:0 12px 16px}
+h2{font-size:17px;margin:14px 0 8px}
+.card{background:#111827;border-radius:12px;padding:10px;overflow:hidden}
+.trade-box{background:#111827;margin:12px;border-radius:14px;padding:16px}
+select,input{width:100%;padding:12px;margin:8px 0;background:#1f2937;border:1px solid #374151;color:#fff;border-radius:10px;font-size:15px}
+.btns{display:flex;gap:10px;margin-top:10px}
+.buy{flex:1;background:#22c55e;border:none;padding:14px;border-radius:10px;font-weight:900;color:#fff;font-size:16px}
+.sell{flex:1;background:#ef4444;border:none;padding:14px;border-radius:10px;font-weight:900;color:#fff;font-size:16px}
+.note{font-size:12px;color:#9ca3af;text-align:center;padding:10px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">TradePro 💹</div>
-  <div class="balance">Balance: $<span id="balance">10000</span> | P&L: <span id="pnl" class="green">$0</span></div>
+<header>
+<div class="logo">Trade<span>Pro</span> 📈</div>
+<div class="bal">Balance: <b>$10000</b></div>
+</header>
+
+<!-- TOP TICKER - INDIAN + FOREX LIVE -->
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+{
+"symbols": [
+{"proName": "NSE:NIFTY","title": "NIFTY 50"},
+{"proName": "NSE:BANKNIFTY","title": "BANK NIFTY"},
+{"proName": "BSE:SENSEX","title": "SENSEX"},
+{"proName": "NSE:NIFTYIT","title": "NIFTY IT"},
+{"proName": "NSE:FINNIFTY","title": "FIN NIFTY"},
+{"proName": "NSE:MIDCPNIFTY","title": "MIDCAP NIFTY"},
+{"proName": "FX:EURUSD","title": "EUR/USD"},
+{"proName": "FX:GBPUSD","title": "GBP/USD"},
+{"proName": "FX:USDJPY","title": "USD/JPY"},
+{"proName": "FX:USDINR","title": "USD/INR"},
+{"proName": "OANDA:XAUUSD","title": "GOLD"},
+{"proName": "BINANCE:BTCUSDT","title": "BTC"},
+{"proName": "BINANCE:ETHUSDT","title": "ETH"}
+],
+"colorTheme": "dark",
+"isTransparent": false,
+"displayMode": "adaptive",
+"locale": "in"
+}
+</script>
 </div>
 
-<div class="container">
-  <div class="left">
-    <div class="pairs" id="pairs"></div>
-    <h2 id="pairName">EUR/USD - <span class="green" id="price">1.0850</span></h2>
-    <p style="color:#888;font-size:13px;margin:5px 0">Live Demo Chart - Real Money Nahi Hai</p>
-    <canvas id="chart" width="600" height="280"></canvas>
-  </div>
-
-  <div class="right trade-box">
-    <h3>Trade</h3>
-    <label>Pair</label>
-    <select id="pairSelect"><option>EUR/USD</option><option>GBP/USD</option><option>BTC/USD</option><option>GOLD</option></select>
-    <label>Amount ($)</label>
-    <input type="number" id="amount" value="100" placeholder="Amount">
-    <label>Leverage</label>
-    <select id="lev"><option>1:100</option><option>1:200</option><option>1:500</option></select>
-    <div class="btns">
-      <button class="btn buy" onclick="trade('BUY')">BUY ▲</button>
-      <button class="btn sell" onclick="trade('SELL')">SELL ▼</button>
-    </div>
-    <div class="history" id="history"><b>Trade History</b><div>Abhi koi trade nahi hai</div></div>
-  </div>
+<div class="tabs">
+<button class="tab active" onclick="showTab('indian',this)">🇮🇳 Indian Market</button>
+<button class="tab" onclick="showTab('forex',this)">💱 Forex</button>
+<button class="tab" onclick="showTab('crypto',this)">₿ Crypto & Gold</button>
 </div>
 
-<p class="note">⚠️ Ye sirf Demo / College Project ke liye hai. Real trading ke liye SEBI regulated broker hi use karein.</p>
+<!-- INDIAN MARKET -->
+<div id="indian" class="section">
+<h2>🇮🇳 Indian Market - Live</h2>
+<div class="card">
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+{
+"title": "Indian Market",
+"width": "100%",
+"height": "450",
+"locale": "in",
+"showSymbolLogo": true,
+"colorTheme": "dark",
+"isTransparent": false,
+"symbolsGroups": [
+{"name": "NSE","symbols": [{"name": "NSE:NIFTY"},{"name": "NSE:BANKNIFTY"},{"name": "NSE:FINNIFTY"},{"name": "NSE:NIFTYIT"},{"name": "NSE:MIDCPNIFTY"},{"name": "NSE:NIFTYPHARMA"},{"name": "NSE:NIFTYAUTO"}]},
+{"name": "BSE","symbols": [{"name": "BSE:SENSEX"},{"name": "BSE:BANKEX"}]},
+{"name": "Top Stocks","symbols": [{"name": "NSE:RELIANCE"},{"name": "NSE:TCS"},{"name": "NSE:INFY"},{"name": "NSE:HDFCBANK"},{"name": "NSE:SBIN"},{"name": "NSE:TATAMOTORS"}]}
+]
+}
+</script>
+</div>
+</div>
+</div>
+
+<!-- FOREX -->
+<div id="forex" class="section" style="display:none">
+<h2>💱 Forex Market - Live</h2>
+<div class="card">
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+{
+"width": "100%",
+"height": "450",
+"locale": "in",
+"showSymbolLogo": true,
+"colorTheme": "dark",
+"isTransparent": false,
+"symbolsGroups": [
+{"name": "Forex","symbols": [{"name": "FX:EURUSD"},{"name": "FX:GBPUSD"},{"name": "FX:USDJPY"},{"name": "FX:USDINR"},{"name": "FX:AUDUSD"},{"name": "FX:USDCAD"},{"name": "FX:EURINR"},{"name": "FX:GBPINR"}]}
+]
+}
+</script>
+</div>
+</div>
+</div>
+
+<!-- CRYPTO -->
+<div id="crypto" class="section" style="display:none">
+<h2>₿ Crypto & Gold - Live</h2>
+<div class="card">
+<div class="tradingview-widget-container">
+<div class="tradingview-widget-container__widget"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+{
+"width": "100%",
+"height": "450",
+"locale": "in",
+"showSymbolLogo": true,
+"colorTheme": "dark",
+"isTransparent": false,
+"symbolsGroups": [
+{"name": "Crypto & Commodities","symbols": [{"name": "BINANCE:BTCUSDT"},{"name": "BINANCE:ETHUSDT"},{"name": "BINANCE:SOLUSDT"},{"name": "OANDA:XAUUSD"},{"name": "OANDA:XAGUSD"},{"name": "TVC:USOIL"}]}
+]
+}
+</script>
+</div>
+</div>
+</div>
+
+<!-- MAIN CHART -->
+<div class="section">
+<h2>📊 Live Chart - NIFTY 50</h2>
+<div class="card" style="height:520px">
+<div class="tradingview-widget-container" style="height:100%">
+<div id="tradingview_chart" style="height:100%"></div>
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script>
+new TradingView.widget({
+"autosize": true,
+"symbol": "NSE:NIFTY",
+"interval": "15",
+"timezone": "Asia/Kolkata",
+"theme": "dark",
+"style": "1",
+"locale": "in",
+"toolbar_bg": "#111827",
+"enable_publishing": false,
+"allow_symbol_change": true,
+"container_id": "tradingview_chart"
+});
+</script>
+</div>
+</div>
+<p class="note">Chart me upar search karke BANKNIFTY, SENSEX, EURUSD, BTC koi bhi dekh sakta hai</p>
+</div>
+
+<!-- TRADE BOX -->
+<div class="trade-box">
+<h2>⚡ Quick Trade (Demo)</h2>
+<label>Pair</label>
+<select id="pair">
+<option>NIFTY 50</option><option>BANK NIFTY</option><option>SENSEX</option>
+<option>EUR/USD</option><option>GBP/USD</option><option>USD/INR</option>
+<option>GOLD</option><option>BTC/USD</option>
+</select>
+<label>Amount ($)</label>
+<input type="number" id="amt" value="100">
+<label>Leverage</label>
+<select><option>1:100</option><option>1:200</option><option>1:500</option></select>
+<div class="btns">
+<button class="buy" onclick="trade('BUY')">BUY ▲</button>
+<button class="sell" onclick="trade('SELL')">SELL ▼</button>
+</div>
+<p id="history" style="margin-top:12px;font-size:13px;color:#9ca3af">Abhi koi trade nahi hai</p>
+</div>
+
+<p class="note">TradePro • Live data by TradingView • Indian Market Mon-Fri 9:15 AM - 3:30 PM • Forex 24x5</p>
 
 <script>
-let balance = 10000, pnl = 0;
-let pairs = [
-  {name:"EUR/USD", price:1.0850},
-  {name:"GBP/USD", price:1.2700},
-  {name:"BTC/USD", price:67500},
-  {name:"GOLD", price:2350}
-];
-let current = 0;
-let historyData = [];
-
-function renderPairs(){
-  document.getElementById('pairs').innerHTML = pairs.map((p,i)=>`<div class="pair ${i==current?'active':''}" onclick="selectPair(${i})">${p.name}<br><b class="${Math.random()>0.5?'green':'red'}">${p.price}</b></div>`).join('');
+function showTab(id,btn){
+document.getElementById('indian').style.display='none';
+document.getElementById('forex').style.display='none';
+document.getElementById('crypto').style.display='none';
+document.getElementById(id).style.display='block';
+document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
 }
-function selectPair(i){ current=i; document.getElementById('pairName').innerHTML = pairs[i].name + ' - <span class="green">'+pairs[i].price+'</span>'; document.getElementById('pairSelect').value = pairs[i].name; renderPairs(); drawChart(); }
-function trade(type){
-  let amt = parseInt(document.getElementById('amount').value) || 100;
-  if(amt > balance){ alert("Balance kam hai!"); return; }
-  let profit = Math.floor(Math.random()*40 - 15);
-  balance += profit; pnl += profit;
-  document.getElementById('balance').innerText = balance;
-  let pnlEl = document.getElementById('pnl'); pnlEl.innerText = "$"+pnl; pnlEl.className = pnl>=0?"green":"red";
-  historyData.unshift(`${type} ${pairs[current].name} - $${amt} - ${profit>=0?'Profit +$'+profit:'Loss $'+profit}`);
-  document.getElementById('history').innerHTML = "<b>Trade History</b>" + historyData.map(h=>`<div>${h}</div>`).join('');
-  alert(type + " Trade Done! Result: " + (profit>=0?"Profit +$"+profit:"Loss $"+profit));
+function trade(side){
+let p=document.getElementById('pair').value;
+let a=document.getElementById('amt').value;
+document.getElementById('history').innerHTML = side+" "+p+" - $"+a+" ✅ Trade lag gaya! (Demo)";
+alert(side+" Trade Done: "+p+" $"+a);
 }
-function drawChart(){
-  let c = document.getElementById('chart'); let ctx = c.getContext('2d');
-  ctx.clearRect(0,0,c.width,c.height);
-  ctx.beginPath(); ctx.strokeStyle="#f0b90b"; ctx.lineWidth=2;
-  let y = 140;
-  for(let x=0;x<=600;x+=20){ y += (Math.random()*30-15); ctx.lineTo(x,y); }
-  ctx.stroke();
-  ctx.fillStyle="#f0b90b"; ctx.fillText("DEMO CHART - LIVE", 10, 20);
-}
-setInterval(()=>{
-  pairs.forEach(p=>{ p.price = (parseFloat(p.price) + (Math.random()*0.002-0.001)).toFixed(4); });
-  renderPairs(); document.getElementById('price').innerText = pairs[current].price;
-},2000);
-renderPairs(); drawChart();
 </script>
 </body>
 </html>
